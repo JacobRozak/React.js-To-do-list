@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <script src="https://fb.me/react-0.14.3.js"></script>
+    <script src="https://fb.me/react-dom-0.14.3.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.25/browser.min.js"></script>
+    <style>
+    a.delete{
+      color: red;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+         <div class="col-md-12">
+            <div id="first"></div>
+         </div>
+      </div>
+   <script type="text/babel">
+       var App = React.createClass({
+         getInitialState: function(){
+           return{
+          text: "",
+           todos: [
+             {
+             id:1,
+             name: "Watch WCS"
+           },
+           {
+             id:2,
+             name: "Practice terran vs protoss"
+           },
+           {
+             id:3,
+             name: "Study Endgames"
+           }
+         ]
+           }
+         },
+         render: function(){
+           return(
+             <div>
+                <TodoForm onTodoAdd={this.handleTodoAdd} />
+                <TodoList todos={this.state.todos} deleteTodo={this.handleTodoDelete}/>
+             </div>
+           )
+         },
+         handleTodoAdd : function(text){
+          var newTodo = {
+            id: this.state.todos.length + 1,
+            name: text
+          }
+          this.setState({todos: this.state.todos.concat(newTodo)})
+        },
+        handleTodoDelete: function(todo){
+            var todos = this.state.todos;
+            for(var i =0;i<todos.length;i++){
+            if(todos[i].id == todo.id){
+              todos.splice(i, 1)
+            }
+          }
+          this.setState({todos: todos})
+        }
+       })
+       var TodoForm = React.createClass({
+         render: function(){
+           return(
+              <div>
+                 <form onSubmit={this.onSubmit}>
+                   <div className="form-group">
+                    <label>Todo Form stuff </label>
+                    <input className="form-control" type="text" ref="text" onChange={this.onChange} />
+                  </div>
+                 </form>
+              </div>
+           )
+         },
+         onChange: function(){
+           return console.log("submited")
+         },
+         onSubmit: function(e){
+           e.preventDefault();
+           console.log(this.refs.text.value)
+          var text = this.refs.text.value.trim();
+          if(!text){
+            alert("make an entry")
+          }
+          this.props.onTodoAdd(text);
+          this.refs.text.value=""
+         }
+       })
+
+       var TodoList = React.createClass({
+         render: function(){
+           return(
+           <div>
+              <ul className="list-group">
+              {
+              this.props.todos.map(todo => {
+                 return <li className="list-group-item" todo={todo} key={todo.id}> {todo.name} <a href="#" className="delete" onClick={this.onDelete.bind(this, todo)}>x</a> </li>
+
+               })
+               }
+               </ul>
+           </div>
+         )
+       },
+       onDelete(todo){
+         //console.log(todo)
+         this.props.deleteTodo(todo)
+       }
+       })
+       //make sure to remember that this.props.odos.map is a javascript wihin jsx , therefore dont forget {}
+ReactDOM.render(
+  <App />,
+  document.getElementById('first')
+)
+   </script>
+ </body>
+ </html>
